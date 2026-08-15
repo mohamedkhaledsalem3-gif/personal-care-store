@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Computed;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -77,18 +78,27 @@ class Product extends Model
         )->withTimestamps();
     }
 
-    public function getCurrentPriceAttribute(): float
+    /**
+     * السعر الحالي (سعر البيع إن وُجد، وإلا السعر الأساسي).
+     */
+    #[Computed]
+    public function current_price(): float
     {
         return (float) ($this->sale_price ?? $this->price);
     }
 
-public function getRouteKeyName(): string
-{
-    return 'slug';
-}
-    public function getProfitAttribute(): float
+    /**
+     * الربح من الوحدة (السعر الحالي - تكلفة الشراء).
+     */
+    #[Computed]
+    public function profit(): float
     {
         return $this->current_price - (float) $this->cost_price;
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 
     /**
