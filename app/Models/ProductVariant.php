@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Computed;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,12 +61,20 @@ class ProductVariant extends Model
         return $this->hasOne(Inventory::class);
     }
 
-    public function getCurrentPriceAttribute(): float
+    /**
+     * السعر الحالي (سعر البيع إن وُجد، وإلا السعر الأساسي).
+     */
+    #[Computed]
+    public function current_price(): float
     {
         return (float) ($this->sale_price ?? $this->price);
     }
 
-    public function getProfitAttribute(): float
+    /**
+     * الربح من الوحدة (السعر الحالي - تكلفة الشراء).
+     */
+    #[Computed]
+    public function profit(): float
     {
         return $this->current_price - (float) ($this->cost_price ?? 0);
     }
@@ -73,7 +82,8 @@ class ProductVariant extends Model
     /**
      * الكمية المتاحة للبيع فعليًا.
      */
-    public function getAvailableQuantityAttribute(): int
+    #[Computed]
+    public function available_quantity(): int
     {
         if ($this->relationLoaded('inventory')) {
             return $this->inventory?->available_quantity ?? 0;
