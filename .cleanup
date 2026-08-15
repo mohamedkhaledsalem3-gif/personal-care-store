@@ -1,0 +1,15 @@
+# This file tracks corrupted files to be removed
+# See commit for details
+
+These files were corrupted during initial push and should be ignored:
+- cancel($order)
+- false
+- get([
+- only([
+- sync([
+- type
+- unique([
+- status
+- personal-care-store.zip
+
+All have been removed in this cleanup commit.
